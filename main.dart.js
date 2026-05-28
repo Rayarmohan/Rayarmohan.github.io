@@ -73277,7 +73277,7 @@ return A.J(A.TX(A.fD("assets/rayar_mohan.pdf",0,null),B.i3),$async$$0)
 case 4:s=!b?2:3
 break
 case 2:s=5
-return A.J(A.TX(A.fD("https://rayarmohan.github.io/assets/RAYAR%20MOHAN.pdf",0,null),B.i3),$async$$0)
+return A.J(A.TX(A.fD("https://rayarmohan.github.io/assets/rayar_mohan.pdf",0,null),B.i3),$async$$0)
 case 5:case 3:return A.N(null,r)}})
 return A.O($async$$0,r)},
 $S:17}
