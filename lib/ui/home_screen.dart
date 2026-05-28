@@ -335,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )) {
                     // Fallback: try opening directly
                     await launchUrl(
-                      Uri.parse('https://rayarmohan.github.io/assets/RAYAR%20MOHAN.pdf'),
+                      Uri.parse('https://rayarmohan.github.io/assets/rayar_mohan.pdf'),
                       mode: LaunchMode.externalApplication,
                     );
                   }
