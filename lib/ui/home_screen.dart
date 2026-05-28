@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: 'Download My RESUME',
                 onTap: () async {
                   // On web, assets are served from the root URL
-                  final Uri url = Uri.parse('assets/RAYAR MOHAN.pdf');
+                  final Uri url = Uri.parse('assets/rayar_mohan.pdf');
                   if (!await launchUrl(
                     url,
                     mode: LaunchMode.externalApplication,
