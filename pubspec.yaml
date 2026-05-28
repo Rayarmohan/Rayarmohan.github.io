@@ -1,0 +1,33 @@
+name: gradient_mouse
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  google_fonts: ^8.1.0
+  lottie: ^3.3.3
+  dotlottie_flutter: ^0.1.1
+  dotlottie_loader: ^0.0.6
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # The assets keyword must align perfectly under the 'flutter:' section (2 spaces indentation)
+  shaders:
+    - shaders/gradient_blinds.frag
+
+  assets:
+    - assets/  
