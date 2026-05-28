@@ -327,10 +327,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ShiningButton(
                 text: 'Download My RESUME',
                 onTap: () async {
-                  const String assetPath = 'assets/RAYAR MOHAN.pdf';
-                  final Uri url = Uri.parse(assetPath);
-                  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                    throw Exception('Could not launch $assetPath');
+                  // On web, assets are served from the root URL
+                  final Uri url = Uri.parse('assets/RAYAR MOHAN.pdf');
+                  if (!await launchUrl(
+                    url,
+                    mode: LaunchMode.externalApplication,
+                  )) {
+                    // Fallback: try opening directly
+                    await launchUrl(
+                      Uri.parse('https://rayarmohan.github.io/assets/RAYAR%20MOHAN.pdf'),
+                      mode: LaunchMode.externalApplication,
+                    );
                   }
                 },
               ),
@@ -385,17 +392,17 @@ class _HomeScreenState extends State<HomeScreen> {
             spacing: 20,
             runSpacing: 20,
             children: const [
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('flutter.jpg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('android.jpg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('ios.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('dart.jpg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('firebase.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('cloudg.jpeg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('git.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('postman.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('figma.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('aws.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('stripe.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/flutter.jpg')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/android.jpg')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/ios.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/dart.jpg')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/firebase.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/cloudg.jpeg')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/git.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/postman.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/figma.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/aws.png')),
+              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/stripe.png')),
             ],
           ),
         ),
