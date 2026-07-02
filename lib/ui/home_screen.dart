@@ -1,6 +1,6 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_mouse/core/helper_functions.dart';
 import 'package:gradient_mouse/ui/widgets/education_section.dart';
@@ -9,7 +9,6 @@ import 'package:gradient_mouse/ui/widgets/gradient_blinds.dart';
 import 'package:gradient_mouse/ui/widgets/home_shining_nav_buttons.dart';
 import 'package:gradient_mouse/ui/widgets/shining_button.dart';
 import 'package:gradient_mouse/ui/widgets/what_i_do.dart';
-import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -88,6 +87,279 @@ class _AnimatedOnScrollState extends State<AnimatedOnScroll>
 }
 
 // ─────────────────────────────────────────────────────────────
+// CosmicAstronautAnimation  –  canvas-drawn floating astronaut
+// ─────────────────────────────────────────────────────────────
+class CosmicAstronautAnimation extends StatefulWidget {
+  const CosmicAstronautAnimation({super.key});
+
+  @override
+  State<CosmicAstronautAnimation> createState() => _CosmicAstronautAnimationState();
+}
+
+class _CosmicAstronautAnimationState extends State<CosmicAstronautAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  final List<_Star> _stars = List.generate(45, (_) => _Star.random());
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 6))..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _AstronautPainter(_controller.value, _stars),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _Star {
+  final double dx;
+  final double dy;
+  final double radius;
+  final double speed;
+
+  _Star(this.dx, this.dy, this.radius, this.speed);
+
+  factory _Star.random() {
+    final rnd = math.Random();
+    return _Star(
+      rnd.nextDouble(),
+      rnd.nextDouble(),
+      rnd.nextDouble() * 1.6 + 0.6,
+      rnd.nextDouble() * 2 + 0.5,
+    );
+  }
+}
+
+class _AstronautPainter extends CustomPainter {
+  final double t;
+  final List<_Star> stars;
+
+  _AstronautPainter(this.t, this.stars);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+
+    for (final star in stars) {
+      final twinkle = (math.sin(t * 2 * math.pi * star.speed) + 1) / 2;
+      final paint = Paint()..color = Colors.white.withOpacity(0.2 + twinkle * 0.6);
+      canvas.drawCircle(Offset(star.dx * size.width, star.dy * size.height), star.radius, paint);
+    }
+
+    final bob = math.sin(t * 2 * math.pi) * size.height * 0.03;
+    final astronautCenter = Offset(center.dx, center.dy + bob);
+
+    final glowPaint = Paint()
+      ..color = Colors.blueAccent.withOpacity(0.15)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 40);
+    canvas.drawCircle(astronautCenter, size.width * 0.28, glowPaint);
+
+    _drawOrbitDust(canvas, astronautCenter, size);
+    _drawAstronaut(canvas, astronautCenter, size);
+  }
+
+  void _drawOrbitDust(Canvas canvas, Offset center, Size size) {
+    final orbitRadius = size.width * 0.32;
+    final angle = t * 2 * math.pi;
+
+    final trailPaint = Paint()
+      ..color = Colors.purpleAccent.withOpacity(0.25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final rect = Rect.fromCenter(center: center, width: orbitRadius * 2, height: orbitRadius * 0.8);
+    canvas.drawOval(rect, trailPaint);
+
+    final dustPos = Offset(
+      center.dx + orbitRadius * math.cos(angle),
+      center.dy + orbitRadius * 0.4 * math.sin(angle),
+    );
+    canvas.drawCircle(dustPos, 5, Paint()..color = Colors.purpleAccent.withOpacity(0.85));
+
+    final secondAngle = angle * 1.6 + math.pi;
+    final secondPos = Offset(
+      center.dx + orbitRadius * 0.7 * math.cos(secondAngle),
+      center.dy + orbitRadius * 0.55 * math.sin(secondAngle),
+    );
+    canvas.drawCircle(secondPos, 3.5, Paint()..color = Colors.cyanAccent.withOpacity(0.85));
+  }
+
+  void _drawAstronaut(Canvas canvas, Offset center, Size size) {
+    final scale = size.width / 280;
+    final bodyPaint = Paint()..color = const Color(0xFFE8E8E8);
+    final shadingStroke = Paint()
+      ..color = const Color(0xFFB8C4D0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2 * scale;
+    final visorPaint = Paint()..color = const Color(0xFF203A55);
+    final visorHighlight = Paint()..color = Colors.white.withOpacity(0.5);
+    final tiltAngle = math.sin(t * 2 * math.pi) * 0.05;
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(tiltAngle);
+
+    final bodyRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset(0, 40 * scale), width: 90 * scale, height: 110 * scale),
+      Radius.circular(40 * scale),
+    );
+    canvas.drawRRect(bodyRect, bodyPaint);
+    canvas.drawRRect(bodyRect, shadingStroke);
+
+    final leftArm = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset(-55 * scale, 30 * scale), width: 30 * scale, height: 60 * scale),
+      Radius.circular(15 * scale),
+    );
+    final rightArm = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset(55 * scale, 10 * scale), width: 30 * scale, height: 60 * scale),
+      Radius.circular(15 * scale),
+    );
+    canvas.drawRRect(leftArm, bodyPaint);
+    canvas.drawRRect(rightArm, bodyPaint);
+
+    canvas.drawCircle(Offset(0, -30 * scale), 55 * scale, bodyPaint);
+    canvas.drawCircle(
+      Offset(0, -30 * scale),
+      55 * scale,
+      Paint()
+        ..color = const Color(0xFFB8C4D0)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3 * scale,
+    );
+
+    canvas.drawCircle(Offset(5 * scale, -32 * scale), 38 * scale, visorPaint);
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(-5 * scale, -45 * scale), width: 30 * scale, height: 20 * scale),
+      math.pi * 0.9,
+      math.pi * 0.6,
+      false,
+      visorHighlight,
+    );
+
+    final chestLightOpacity = 0.8 + math.sin(t * 2 * math.pi * 3) * 0.2;
+    canvas.drawCircle(
+      Offset(0, 30 * scale),
+      6 * scale,
+      Paint()..color = Colors.redAccent.withOpacity(chestLightOpacity),
+    );
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _AstronautPainter oldDelegate) => true;
+}
+
+// ─────────────────────────────────────────────────────────────
+// AtomOrbitAnimation  –  canvas-drawn orbiting electrons
+// ─────────────────────────────────────────────────────────────
+class AtomOrbitAnimation extends StatefulWidget {
+  const AtomOrbitAnimation({super.key});
+
+  @override
+  State<AtomOrbitAnimation> createState() => _AtomOrbitAnimationState();
+}
+
+class _AtomOrbitAnimationState extends State<AtomOrbitAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 8))..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _AtomPainter(_controller.value),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _AtomPainter extends CustomPainter {
+  final double t;
+
+  _AtomPainter(this.t);
+
+  static const List<double> _orbitTilts = [0.0, math.pi / 3, -math.pi / 3];
+  static const List<double> _orbitSpeeds = [1.0, 1.4, 0.7];
+  static const List<Color> _orbitColors = [Colors.cyanAccent, Colors.purpleAccent, Colors.greenAccent];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width * 0.36;
+
+    final nucleusGlow = Paint()
+      ..color = Colors.orangeAccent.withOpacity(0.25)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30);
+    canvas.drawCircle(center, size.width * 0.12, nucleusGlow);
+    canvas.drawCircle(center, size.width * 0.045, Paint()..color = const Color(0xFFFFC168));
+
+    for (var i = 0; i < 3; i++) {
+      canvas.save();
+      canvas.translate(center.dx, center.dy);
+      canvas.rotate(_orbitTilts[i]);
+
+      final orbitPaint = Paint()
+        ..color = _orbitColors[i].withOpacity(0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2;
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset.zero, width: radius * 2, height: radius * 0.7),
+        orbitPaint,
+      );
+
+      final angle = t * 2 * math.pi * _orbitSpeeds[i];
+      final electronPos = Offset(radius * math.cos(angle), radius * 0.35 * math.sin(angle));
+
+      canvas.drawCircle(
+        electronPos,
+        9,
+        Paint()
+          ..color = _orbitColors[i].withOpacity(0.5)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+      );
+      canvas.drawCircle(electronPos, 5, Paint()..color = _orbitColors[i]);
+
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AtomPainter oldDelegate) => true;
+}
+
+// ─────────────────────────────────────────────────────────────
 // HomeScreen
 // ─────────────────────────────────────────────────────────────
 class HomeScreen extends StatefulWidget {
@@ -122,7 +394,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Social icon row (reused in hero + contact) ──────────────
   Widget _buildSocialRow() {
     return Row(
       children: [
@@ -149,47 +420,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Lottie builders ─────────────────────────────────────────
-  Widget _buildLottie() {
-    return DotLottieLoader.fromAsset(
-      'assets/spaceboydeveloper.lottie',
-      frameBuilder: (BuildContext context, DotLottie? lottie) {
-        if (lottie != null) {
-          return Lottie.memory(
-            alignment: Alignment.topCenter,
-            lottie.animations.values.single,
-            fit: BoxFit.contain,
-          );
-        }
-        return const Center(child: CircularProgressIndicator(color: Colors.grey));
-      },
-    );
-  }
-
-  Widget _buildLottieRadio() {
-    return DotLottieLoader.fromAsset(
-      'assets/radio.lottie',
-      frameBuilder: (BuildContext context, DotLottie? lottie) {
-        if (lottie != null) {
-          return Lottie.memory(
-            alignment: Alignment.topCenter,
-            lottie.animations.values.single,
-            fit: BoxFit.contain,
-          );
-        }
-        return const Center(child: CircularProgressIndicator(color: Colors.grey));
-      },
-    );
-  }
-
-  // ── Navbar ──────────────────────────────────────────────────
   Widget _buildNavbar(
     bool isSmall,
     bool isMedium,
     bool isLarge,
     TextTheme textTheme,
   ) {
-    // The 4 nav buttons — shared across all layouts
     final List<Widget> navButtons = [
       HoverShiningNavButton(text: 'Skills',          onTap: () => _scrollToKey(_skillsKey)),
       HoverShiningNavButton(text: 'Work Experience', onTap: () => _scrollToKey(_experienceKey)),
@@ -197,7 +433,6 @@ class _HomeScreenState extends State<HomeScreen> {
       HoverShiningNavButton(text: 'Contact me',      onTap: () => _scrollToKey(_contactKey)),
     ];
 
-    // ── Small: stack name above wrapped buttons ──────────────
     if (isSmall) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +446,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // ── Medium: single row, evenly spaced, no overflow ───────
     if (isMedium) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -228,15 +462,11 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // ── Large: name on left, buttons on right ─────────────────
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Left spacer (empty — logo/name could go here later)
         const Spacer(flex: 2),
-
-        // Right side: buttons that NEVER overflow
         Flexible(
           flex: 3,
           child: Wrap(
@@ -250,7 +480,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Hero text block ─────────────────────────────────────────
   Widget _buildTextBlock(
     BuildContext context,
     TextTheme textTheme,
@@ -263,7 +492,6 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         const SizedBox(height: 25),
 
-        // Name
         AnimatedOnScroll(
           key: const ValueKey('hero_name'),
           delay: const Duration(milliseconds: 100),
@@ -276,7 +504,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         const SizedBox(height: 20),
 
-        // Role
         AnimatedOnScroll(
           key: const ValueKey('hero_role'),
           delay: const Duration(milliseconds: 220),
@@ -290,7 +517,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         const SizedBox(height: 16),
 
-        // Bio
         AnimatedOnScroll(
           key: const ValueKey('hero_bio'),
           delay: const Duration(milliseconds: 340),
@@ -307,7 +533,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         const SizedBox(height: 50),
 
-        // Social icons
         AnimatedOnScroll(
           key: const ValueKey('hero_social'),
           delay: const Duration(milliseconds: 460),
@@ -317,7 +542,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         const SizedBox(height: 20),
 
-        // Resume button
         AnimatedOnScroll(
           key: const ValueKey('hero_resume'),
           delay: const Duration(milliseconds: 560),
@@ -327,13 +551,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ShiningButton(
                 text: 'Download My RESUME',
                 onTap: () async {
-                  // On web, assets are served from the root URL
                   final Uri url = Uri.parse('https://rayarmohan.github.io/assets/assets/rayar_mohan.pdf');
                   if (!await launchUrl(
                     url,
                     mode: LaunchMode.externalApplication,
                   )) {
-                    // Fallback: try opening directly
                     await launchUrl(
                       Uri.parse('https://rayarmohan.github.io/assets/rayar_mohan.pdf'),
                       mode: LaunchMode.externalApplication,
@@ -348,7 +570,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── What I Do text block ────────────────────────────────────
   Widget _buildWhatIDoTextBlock(
     BuildContext context,
     TextTheme textTheme,
@@ -361,7 +582,6 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         const SizedBox(height: 25),
 
-        // Heading
         AnimatedOnScroll(
           key: const ValueKey('skills_heading'),
           slideFrom: const Offset(-60, 0),
@@ -373,7 +593,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         const SizedBox(height: 20),
 
-        // WhatIDoSection list
         AnimatedOnScroll(
           key: const ValueKey('skills_list'),
           delay: const Duration(milliseconds: 150),
@@ -383,7 +602,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
         const SizedBox(height: 50),
 
-        // Tech stack icons
         AnimatedOnScroll(
           key: const ValueKey('skills_stack'),
           delay: const Duration(milliseconds: 300),
@@ -410,9 +628,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // BUILD
-  // ─────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     final textTheme    = Theme.of(context).textTheme;
@@ -436,7 +651,6 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _scrollController,
         child: Stack(
           children: [
-            // ── Background shader ──────────────────────────────
             Positioned.fill(
               child: GradientBlinds(
                 shader: widget.shader,
@@ -460,7 +674,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  // ── Navbar ───────────────────────────────────
                   AnimatedOnScroll(
                     key: const ValueKey('navbar'),
                     slideFrom: const Offset(0, -30),
@@ -470,12 +683,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: 100),
 
-                  // ── Hero section ─────────────────────────────
                   isSmall
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Lottie fades in from above on small screens
                             AnimatedOnScroll(
                               key: const ValueKey('hero_lottie_small'),
                               slideFrom: const Offset(0, -40),
@@ -484,7 +695,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SizedBox(
                                   width: lottieSize,
                                   height: lottieSize,
-                                  child: _buildLottie(),
+                                  child: const CosmicAstronautAnimation(),
                                 ),
                               ),
                             ),
@@ -498,7 +709,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             Expanded(
                               child: _buildTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
                             ),
-                            // Lottie slides in from the right
                             AnimatedOnScroll(
                               key: const ValueKey('hero_lottie'),
                               slideFrom: const Offset(80, 0),
@@ -508,7 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SizedBox(
                                   width: lottieSize,
                                   height: lottieSize,
-                                  child: _buildLottie(),
+                                  child: const CosmicAstronautAnimation(),
                                 ),
                               ),
                             ),
@@ -517,7 +727,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   SizedBox(height: screenHeight * 0.15),
 
-                  // ── Skills / What I Do section ───────────────
                   isSmall
                       ? Column(
                           key: _skillsKey,
@@ -531,7 +740,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SizedBox(
                                   width: lottieSize,
                                   height: lottieSize,
-                                  child: _buildLottieRadio(),
+                                  child: const AtomOrbitAnimation(),
                                 ),
                               ),
                             ),
@@ -542,7 +751,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // Radio lottie slides in from the left
                             AnimatedOnScroll(
                               key: const ValueKey('skills_lottie'),
                               slideFrom: const Offset(-80, 0),
@@ -552,7 +760,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SizedBox(
                                   width: lottieSize,
                                   height: lottieSize,
-                                  child: _buildLottieRadio(),
+                                  child: const AtomOrbitAnimation(),
                                 ),
                               ),
                             ),
@@ -564,7 +772,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   SizedBox(height: screenHeight * .20),
 
-                  // ── Experience section ───────────────────────
                   AnimatedOnScroll(
                     key: const ValueKey('exp_heading'),
                     slideFrom: const Offset(-70, 0),
@@ -586,7 +793,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   SizedBox(height: screenHeight * .15),
 
-                  // ── Education section ────────────────────────
                   AnimatedOnScroll(
                     key: const ValueKey('edu_heading'),
                     slideFrom: const Offset(-70, 0),
@@ -606,7 +812,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: EducationSection(),
                   ),
 
-                  // ── Contact section ──────────────────────────
                   SizedBox(key: _contactKey, height: 60),
 
                   AnimatedOnScroll(
@@ -668,7 +873,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: 50),
 
-                  // ── Footer ───────────────────────────────────
                   AnimatedOnScroll(
                     key: const ValueKey('footer'),
                     delay: const Duration(milliseconds: 100),
