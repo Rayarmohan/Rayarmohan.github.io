@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:gradient_mouse/ui/home_screen.dart';
-import 'package:gradient_mouse/theme/custom_dark_theme.dart';
+import 'package:rayar_mohan/theme/custom_dark_theme.dart';
+import 'package:rayar_mohan/ui/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,7 +10,7 @@ void main() async {
 
   try {
     final program = await ui.FragmentProgram.fromAsset(
-      'shaders/gradient_blinds.frag',
+      'shaders/pointer_aura.frag',
     );
     shader = program.fragmentShader();
   } catch (e) {
@@ -21,8 +21,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final ui.FragmentShader? shader;           // ← nullable
-  const MyApp({Key? key, required this.shader}) : super(key: key);
+  final ui.FragmentShader? shader;
+  const MyApp({super.key, required this.shader});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: WebTheme.darkWebTheme,
       home: shader != null
           ? HomeScreen(shader: shader!)
-          : const _ShaderErrorScreen(),      // ← fallback
+          : const _ShaderErrorScreen(),
     );
   }
 }
@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
 // Simple fallback so the app doesn't crash
 class _ShaderErrorScreen extends StatelessWidget {
   const _ShaderErrorScreen();
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

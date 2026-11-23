@@ -2,13 +2,13 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:gradient_mouse/core/helper_functions.dart';
-import 'package:gradient_mouse/ui/widgets/education_section.dart';
-import 'package:gradient_mouse/ui/widgets/experience_section.dart';
-import 'package:gradient_mouse/ui/widgets/gradient_blinds.dart';
-import 'package:gradient_mouse/ui/widgets/home_shining_nav_buttons.dart';
-import 'package:gradient_mouse/ui/widgets/shining_button.dart';
-import 'package:gradient_mouse/ui/widgets/what_i_do.dart';
+import 'package:rayar_mohan/core/helper_functions.dart';
+import 'package:rayar_mohan/ui/widgets/education_section.dart';
+import 'package:rayar_mohan/ui/widgets/experience_section.dart';
+import 'package:rayar_mohan/ui/widgets/home_shining_nav_buttons.dart';
+import 'package:rayar_mohan/ui/widgets/pointer_aura_background.dart';
+import 'package:rayar_mohan/ui/widgets/shining_button.dart';
+import 'package:rayar_mohan/ui/widgets/what_i_do.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -645,252 +645,238 @@ class _HomeScreenState extends State<HomeScreen> {
     final double lottieOffset  = isLarge ? -150 : isMedium ? -80 : 0;
     final double lottie2Offset = isLarge ? 60 : isMedium ? 10 : 0;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Stack(
+    final scrollContent = SingleChildScrollView(
+      controller: _scrollController,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: horizontalPad,
+          top: 50,
+          right: horizontalPad,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned.fill(
-              child: GradientBlinds(
-                shader: widget.shader,
-                angle: 45,
-                blindCount: 20,
-                gradientColors: const [
-                  ui.Color.fromARGB(255, 101, 128, 3),
-                  ui.Color.fromARGB(255, 6, 20, 141),
-                  ui.Color.fromARGB(255, 7, 145, 18),
-                ],
+            AnimatedOnScroll(
+              key: const ValueKey('navbar'),
+              slideFrom: const Offset(0, -30),
+              duration: const Duration(milliseconds: 500),
+              child: _buildNavbar(isSmall, isMedium, isLarge, textTheme),
+            ),
+
+            const SizedBox(height: 100),
+
+            isSmall
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedOnScroll(
+                        key: const ValueKey('hero_lottie_small'),
+                        slideFrom: const Offset(0, -40),
+                        duration: const Duration(milliseconds: 800),
+                        child: Center(
+                          child: SizedBox(
+                            width: lottieSize,
+                            height: lottieSize,
+                            child: const CosmicAstronautAnimation(),
+                          ),
+                        ),
+                      ),
+                      _buildTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _buildTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
+                      ),
+                      AnimatedOnScroll(
+                        key: const ValueKey('hero_lottie'),
+                        slideFrom: const Offset(80, 0),
+                        duration: const Duration(milliseconds: 900),
+                        child: Transform.translate(
+                          offset: Offset(0, lottieOffset),
+                          child: SizedBox(
+                            width: lottieSize,
+                            height: lottieSize,
+                            child: const CosmicAstronautAnimation(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+            SizedBox(height: screenHeight * 0.15),
+
+            isSmall
+                ? Column(
+                    key: _skillsKey,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildWhatIDoTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
+                      AnimatedOnScroll(
+                        key: const ValueKey('skills_lottie_small'),
+                        slideFrom: const Offset(0, 50),
+                        child: Center(
+                          child: SizedBox(
+                            width: lottieSize,
+                            height: lottieSize,
+                            child: const AtomOrbitAnimation(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    key: _skillsKey,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      AnimatedOnScroll(
+                        key: const ValueKey('skills_lottie'),
+                        slideFrom: const Offset(-80, 0),
+                        duration: const Duration(milliseconds: 900),
+                        child: Transform.translate(
+                          offset: Offset(0, lottie2Offset),
+                          child: SizedBox(
+                            width: lottieSize,
+                            height: lottieSize,
+                            child: const AtomOrbitAnimation(),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildWhatIDoTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
+                      ),
+                    ],
+                  ),
+
+            SizedBox(height: screenHeight * .20),
+
+            AnimatedOnScroll(
+              key: const ValueKey('exp_heading'),
+              slideFrom: const Offset(-70, 0),
+              child: Text(
+                key: _experienceKey,
+                'Experience',
+                style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
               ),
             ),
 
-            Padding(
-              padding: EdgeInsets.only(
-                left: horizontalPad,
-                top: 50,
-                right: horizontalPad,
+            const SizedBox(height: 10),
+
+            AnimatedOnScroll(
+              key: const ValueKey('exp_section'),
+              delay: const Duration(milliseconds: 200),
+              slideFrom: const Offset(0, 50),
+              child: ExperienceSection(),
+            ),
+
+            SizedBox(height: screenHeight * .15),
+
+            AnimatedOnScroll(
+              key: const ValueKey('edu_heading'),
+              slideFrom: const Offset(-70, 0),
+              child: Text(
+                key: _educationKey,
+                'Education',
+                style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
               ),
+            ),
+
+            const SizedBox(height: 10),
+
+            AnimatedOnScroll(
+              key: const ValueKey('edu_section'),
+              delay: const Duration(milliseconds: 200),
+              slideFrom: const Offset(0, 50),
+              child: EducationSection(),
+            ),
+
+            SizedBox(key: _contactKey, height: 60),
+
+            AnimatedOnScroll(
+              key: const ValueKey('contact_heading'),
+              slideFrom: const Offset(0, 40),
+              child: Text(
+                'Reach out to me',
+                style: textTheme.headlineLarge!.copyWith(
+                  fontSize: roleFontSize,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            AnimatedOnScroll(
+              key: const ValueKey('contact_body'),
+              delay: const Duration(milliseconds: 150),
+              slideFrom: const Offset(0, 35),
+              child: Text(
+                "I am open to new career opportunities, freelance collaborations, and remote roles worldwide.\n"
+                "Let's build something great together—reach out to me.",
+                style: textTheme.headlineMedium,
+                textAlign: TextAlign.left,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            AnimatedOnScroll(
+              key: const ValueKey('contact_email'),
+              delay: const Duration(milliseconds: 250),
+              slideFrom: const Offset(0, 25),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('navbar'),
-                    slideFrom: const Offset(0, -30),
-                    duration: const Duration(milliseconds: 500),
-                    child: _buildNavbar(isSmall, isMedium, isLarge, textTheme),
+                  Text(
+                    'mohanmanu086@gmail.com',
+                    style: textTheme.titleMedium!.copyWith(color: Colors.grey),
                   ),
-
-                  const SizedBox(height: 100),
-
-                  isSmall
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedOnScroll(
-                              key: const ValueKey('hero_lottie_small'),
-                              slideFrom: const Offset(0, -40),
-                              duration: const Duration(milliseconds: 800),
-                              child: Center(
-                                child: SizedBox(
-                                  width: lottieSize,
-                                  height: lottieSize,
-                                  child: const CosmicAstronautAnimation(),
-                                ),
-                              ),
-                            ),
-                            _buildTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: _buildTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                            ),
-                            AnimatedOnScroll(
-                              key: const ValueKey('hero_lottie'),
-                              slideFrom: const Offset(80, 0),
-                              duration: const Duration(milliseconds: 900),
-                              child: Transform.translate(
-                                offset: Offset(0, lottieOffset),
-                                child: SizedBox(
-                                  width: lottieSize,
-                                  height: lottieSize,
-                                  child: const CosmicAstronautAnimation(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                  SizedBox(height: screenHeight * 0.15),
-
-                  isSmall
-                      ? Column(
-                          key: _skillsKey,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildWhatIDoTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                            AnimatedOnScroll(
-                              key: const ValueKey('skills_lottie_small'),
-                              slideFrom: const Offset(0, 50),
-                              child: Center(
-                                child: SizedBox(
-                                  width: lottieSize,
-                                  height: lottieSize,
-                                  child: const AtomOrbitAnimation(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          key: _skillsKey,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            AnimatedOnScroll(
-                              key: const ValueKey('skills_lottie'),
-                              slideFrom: const Offset(-80, 0),
-                              duration: const Duration(milliseconds: 900),
-                              child: Transform.translate(
-                                offset: Offset(0, lottie2Offset),
-                                child: SizedBox(
-                                  width: lottieSize,
-                                  height: lottieSize,
-                                  child: const AtomOrbitAnimation(),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: _buildWhatIDoTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                            ),
-                          ],
-                        ),
-
-                  SizedBox(height: screenHeight * .20),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('exp_heading'),
-                    slideFrom: const Offset(-70, 0),
-                    child: Text(
-                      key: _experienceKey,
-                      'Experience',
-                      style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
-                    ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '+91 8921358229',
+                    style: textTheme.titleMedium!.copyWith(color: Colors.grey),
                   ),
-
-                  const SizedBox(height: 10),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('exp_section'),
-                    delay: const Duration(milliseconds: 200),
-                    slideFrom: const Offset(0, 50),
-                    child: ExperienceSection(),
-                  ),
-
-                  SizedBox(height: screenHeight * .15),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('edu_heading'),
-                    slideFrom: const Offset(-70, 0),
-                    child: Text(
-                      key: _educationKey,
-                      'Education',
-                      style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('edu_section'),
-                    delay: const Duration(milliseconds: 200),
-                    slideFrom: const Offset(0, 50),
-                    child: EducationSection(),
-                  ),
-
-                  SizedBox(key: _contactKey, height: 60),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('contact_heading'),
-                    slideFrom: const Offset(0, 40),
-                    child: Text(
-                      'Reach out to me',
-                      style: textTheme.headlineLarge!.copyWith(
-                        fontSize: roleFontSize,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('contact_body'),
-                    delay: const Duration(milliseconds: 150),
-                    slideFrom: const Offset(0, 35),
-                    child: Text(
-                      "I am open to new career opportunities, freelance collaborations, and remote roles worldwide.\n"
-                      "Let's build something great together—reach out to me.",
-                      style: textTheme.headlineMedium,
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('contact_email'),
-                    delay: const Duration(milliseconds: 250),
-                    slideFrom: const Offset(0, 25),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'mohanmanu086@gmail.com',
-                          style: textTheme.titleMedium!.copyWith(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '+91 8921358229',
-                          style: textTheme.titleMedium!.copyWith(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('contact_social'),
-                    delay: const Duration(milliseconds: 350),
-                    slideFrom: const Offset(0, 25),
-                    child: _buildSocialRow(),
-                  ),
-
-                  const SizedBox(height: 50),
-
-                  AnimatedOnScroll(
-                    key: const ValueKey('footer'),
-                    delay: const Duration(milliseconds: 100),
-                    slideFrom: const Offset(0, 20),
-                    child: Center(
-                      child: Text(
-                        'Made with ❤️ by Rayar Mohan',
-                        style: textTheme.titleMedium!.copyWith(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 100),
                 ],
               ),
             ),
+
+            const SizedBox(height: 20),
+
+            AnimatedOnScroll(
+              key: const ValueKey('contact_social'),
+              delay: const Duration(milliseconds: 350),
+              slideFrom: const Offset(0, 25),
+              child: _buildSocialRow(),
+            ),
+
+            const SizedBox(height: 50),
+
+            AnimatedOnScroll(
+              key: const ValueKey('footer'),
+              delay: const Duration(milliseconds: 100),
+              slideFrom: const Offset(0, 20),
+              child: Center(
+                child: Text(
+                  'Made with ❤️ by Rayar Mohan',
+                  style: textTheme.titleMedium!.copyWith(color: Colors.grey),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 100),
           ],
         ),
+      ),
+    );
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: CleanGridBackground(
+        child: scrollContent,
       ),
     );
   }

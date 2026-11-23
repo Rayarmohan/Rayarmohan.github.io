@@ -1,11 +1,11 @@
 {
-    "name": "gradient_mouse",
-    "short_name": "gradient_mouse",
+    "name": "Rayar Mohan",
+    "short_name": "Rayar Mohan",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Portfolio of Rayar Mohan, Mobile App Developer specializing in Flutter.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
