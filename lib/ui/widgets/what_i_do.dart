@@ -98,13 +98,15 @@ class _ServiceCardState extends State<_ServiceCard> {
 
   @override
   Widget build(BuildContext context) {
+    final bool compact = MediaQuery.of(context).size.width < 600;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(compact ? 18 : 24),
         decoration: BoxDecoration(
           color: _isHovered ? const Color(0xFF111111) : const Color(0xFF070707),
           borderRadius: BorderRadius.circular(16),
@@ -122,56 +124,86 @@ class _ServiceCardState extends State<_ServiceCard> {
                 ]
               : [],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Dynamic Hover Icon Container
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: _isHovered ? widget.data.highlightColor.withOpacity(0.15) : Colors.white.withOpacity(0.03),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                widget.data.icon,
-                size: 32,
-                color: _isHovered ? widget.data.highlightColor : Colors.grey[400],
-              ),
-            ),
-            const SizedBox(width: 20),
-            // Text Details
-            Expanded(
-              child: Column(
+        child: compact
+            ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  _iconBox(),
+                  const SizedBox(height: 16),
                   Text(
                     widget.data.title,
                     style: widget.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16.5,
+                      height: 1.3,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     widget.data.description,
                     style: widget.textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[400],
-                      height: 1.5,
-                      fontSize: 14,
+                      height: 1.55,
+                      fontSize: 13.5,
                     ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _iconBox(),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.data.title,
+                          style: widget.textTheme.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.data.description,
+                          style: widget.textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[400],
+                            height: 1.5,
+                            fontSize: 14,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
+      ),
+    );
+  }
+
+  Widget _iconBox() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _isHovered
+            ? widget.data.highlightColor.withOpacity(0.15)
+            : Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(
+        widget.data.icon,
+        size: 30,
+        color: _isHovered ? widget.data.highlightColor : Colors.grey[400],
       ),
     );
   }

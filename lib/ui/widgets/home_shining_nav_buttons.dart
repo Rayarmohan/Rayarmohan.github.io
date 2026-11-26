@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class HoverShiningNavButton extends StatefulWidget {
   final String text;
   final VoidCallback? onTap;
+  final bool compact;
 
   const HoverShiningNavButton({
     Key? key,
     required this.text,
     this.onTap,
+    this.compact = false,
   }) : super(key: key);
 
   @override
@@ -48,6 +50,13 @@ class _HoverShiningNavButtonState extends State<HoverShiningNavButton>
 
   @override
   Widget build(BuildContext context) {
+    final double height = widget.compact ? 38 : 44;
+    final double outerRadius = height / 2;
+    final double innerRadius = outerRadius - 2;
+    final double hPad = widget.compact ? 14 : 20;
+    final double fontSize = widget.compact ? 12.5 : 14;
+    final double letterSpacing = widget.compact ? 0.7 : 1.1;
+
     return MouseRegion(
       onEnter: (_) => _handleHover(true),
       onExit: (_) => _handleHover(false),
@@ -57,10 +66,10 @@ class _HoverShiningNavButtonState extends State<HoverShiningNavButton>
         builder: (context, child) {
           return IntrinsicWidth(
             child: Container(
-              height: 44, 
+              height: height,
               padding: const EdgeInsets.all(2.0), // Shining border thickness ring
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(outerRadius),
                 // We keep the SweepGradient active but toggle its visibility with opacity
                 // to prevent the AnimatedContainer layout from collapsing the string text boundary box
                 gradient: SweepGradient(
@@ -75,14 +84,14 @@ class _HoverShiningNavButtonState extends State<HoverShiningNavButton>
                 ),
               ),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: EdgeInsets.symmetric(horizontal: hPad),
                 decoration: BoxDecoration(
                   color: Colors.black, 
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(innerRadius),
                 ),
                 child: InkWell(
                   onTap: widget.onTap,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(innerRadius),
                   hoverColor: Colors.transparent, 
                   splashColor: Colors.white10,
                   child: Center(
@@ -91,11 +100,11 @@ class _HoverShiningNavButtonState extends State<HoverShiningNavButton>
                       maxLines: 1,       // FORCE 1: Prevents breaking to a second line
                       softWrap: false,   // FORCE 2: Disables wrapping engine logic checks entirely
                       overflow: TextOverflow.visible, // Ensures text doesn't unexpectedly clip 
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        letterSpacing: 1.1,
-                        fontSize: 14,
+                        letterSpacing: letterSpacing,
+                        fontSize: fontSize,
                       ),
                     ),
                   ),

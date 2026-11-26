@@ -7,6 +7,7 @@ import 'package:rayar_mohan/ui/widgets/education_section.dart';
 import 'package:rayar_mohan/ui/widgets/experience_section.dart';
 import 'package:rayar_mohan/ui/widgets/home_shining_nav_buttons.dart';
 import 'package:rayar_mohan/ui/widgets/pointer_aura_background.dart';
+import 'package:rayar_mohan/ui/widgets/profile_card.dart';
 import 'package:rayar_mohan/ui/widgets/shining_button.dart';
 import 'package:rayar_mohan/ui/widgets/what_i_do.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -547,567 +548,6 @@ class _CodeEditorPainter extends CustomPainter {
 }
 
 // ─────────────────────────────────────────────────────────────
-// MobileAppAnimation  –  floating phone with a live app UI
-// ─────────────────────────────────────────────────────────────
-class MobileAppAnimation extends StatefulWidget {
-  const MobileAppAnimation({super.key});
-
-  @override
-  State<MobileAppAnimation> createState() => _MobileAppAnimationState();
-}
-
-class _MobileAppAnimationState extends State<MobileAppAnimation>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 9))
-          ..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) => CustomPaint(
-        painter: _MobileAppPainter(_controller.value),
-        size: Size.infinite,
-      ),
-    );
-  }
-}
-
-class _TechChip {
-  final String label;
-  final double relX;
-  final double relY;
-  final double phase;
-  final Color color;
-  const _TechChip(this.label, this.relX, this.relY, this.phase, this.color);
-}
-
-class _MobileAppPainter extends CustomPainter {
-  final double t;
-  _MobileAppPainter(this.t);
-
-  static const Color _blue = Color(0xFF5B8CFF);
-  static const Color _cyan = Color(0xFF4FD1C5);
-  static const Color _purple = Color(0xFFC792EA);
-  static const Color _green = Color(0xFFA9D606);
-  static const Color _amber = Color(0xFFFFBD2E);
-  static const Color _white = Color(0xFFE6E9EF);
-
-  static const List<_TechChip> _chips = [
-    _TechChip('Flutter', 0.16, 0.30, 0.0, _cyan),
-    _TechChip('Dart', 0.84, 0.24, 1.3, _blue),
-    _TechChip('iOS', 0.14, 0.68, 2.1, _white),
-    _TechChip('Android', 0.85, 0.72, 2.9, _green),
-  ];
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (size.width <= 0 || size.height <= 0) return;
-
-    _paintBackground(canvas, size);
-    _paintPhone(canvas, size);
-    _paintChips(canvas, size);
-  }
-
-  void _paintBackground(Canvas canvas, Size size) {
-    final c1 = Offset(
-      size.width * (0.32 + 0.03 * math.sin(t * 2 * math.pi)),
-      size.height * (0.30 + 0.03 * math.cos(t * 2 * math.pi)),
-    );
-    final c2 = Offset(
-      size.width * (0.70 + 0.03 * math.cos(t * 2 * math.pi)),
-      size.height * (0.72 + 0.03 * math.sin(t * 2 * math.pi)),
-    );
-    _orb(canvas, c1, size.width * 0.30, _blue.withValues(alpha: 0.20));
-    _orb(canvas, c2, size.width * 0.28, _purple.withValues(alpha: 0.16));
-
-    for (int i = 0; i < 18; i++) {
-      final double bx = ((i * 37) % 100) / 100;
-      final double by = ((i * 61) % 100) / 100;
-      final double phase = i * 0.7;
-      final double x =
-          size.width * bx + math.sin(t * 2 * math.pi * 0.5 + phase) * 8;
-      final double y =
-          size.height * by + math.cos(t * 2 * math.pi * 0.5 + phase) * 8;
-      final double opacity =
-          0.08 + 0.10 * (math.sin(t * 2 * math.pi * 0.8 + phase) * 0.5 + 0.5);
-      final color = i.isEven ? _blue : _purple;
-      canvas.drawCircle(
-        Offset(x, y),
-        (0.6 + (i % 3) * 0.5) * (size.width / 500),
-        Paint()..color = color.withValues(alpha: opacity),
-      );
-    }
-  }
-
-  void _orb(Canvas canvas, Offset center, double radius, Color color) {
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..color = color
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.6),
-    );
-  }
-
-  void _paintPhone(Canvas canvas, Size size) {
-    final double pw = size.width * 0.36;
-    final double ph = pw * 2.05;
-    final double bob = math.sin(t * 2 * math.pi) * size.height * 0.02;
-    final Offset center = Offset(size.width * 0.5, size.height * 0.5 + bob);
-    final Rect phone = Rect.fromCenter(center: center, width: pw, height: ph);
-    final RRect frame =
-        RRect.fromRectAndRadius(phone, Radius.circular(pw * 0.20));
-
-    canvas.drawRRect(
-      frame.inflate(3),
-      Paint()
-        ..color = _blue.withValues(alpha: 0.35)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 22),
-    );
-    canvas.drawRRect(
-      frame,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF232A38), Color(0xFF0D1017)],
-        ).createShader(phone),
-    );
-    canvas.drawRRect(
-      frame,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = pw * 0.012
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _cyan.withValues(alpha: 0.8),
-            _blue.withValues(alpha: 0.6),
-            _purple.withValues(alpha: 0.7),
-          ],
-        ).createShader(phone),
-    );
-
-    final double bezel = pw * 0.05;
-    final Rect screen = phone.deflate(bezel);
-    final RRect screenRR =
-        RRect.fromRectAndRadius(screen, Radius.circular(pw * 0.15));
-
-    canvas.save();
-    canvas.clipRRect(screenRR);
-    canvas.drawRect(
-      screen,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0B1626), Color(0xFF111A2E)],
-        ).createShader(screen),
-    );
-    _paintScreenUI(canvas, screen);
-    canvas.restore();
-
-    canvas.drawRRect(
-      screenRR,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = _white.withValues(alpha: 0.06),
-    );
-
-    final double islandW = pw * 0.30;
-    final double islandH = pw * 0.075;
-    final Rect island = Rect.fromCenter(
-      center: Offset(center.dx, screen.top + islandH * 1.1),
-      width: islandW,
-      height: islandH,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(island, Radius.circular(islandH / 2)),
-      Paint()..color = const Color(0xFF05070B),
-    );
-    canvas.drawCircle(
-      Offset(island.right - islandH * 0.6, island.center.dy),
-      islandH * 0.18,
-      Paint()..color = _cyan.withValues(alpha: 0.8),
-    );
-  }
-
-  void _paintScreenUI(Canvas canvas, Rect screen) {
-    final double sw = screen.width;
-    final double sh = screen.height;
-    final double pad = sw * 0.08;
-
-    final Rect header = Rect.fromLTWH(
-      screen.left + pad,
-      screen.top + sh * 0.11,
-      sw - pad * 2,
-      sh * 0.20,
-    );
-    final RRect headerRR =
-        RRect.fromRectAndRadius(header, Radius.circular(sw * 0.06));
-
-    canvas.drawRRect(
-      headerRR,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _blue.withValues(alpha: 0.95),
-            _purple.withValues(alpha: 0.85),
-          ],
-        ).createShader(header),
-    );
-
-    final double sheen = (t * 1.6) % 1.0;
-    canvas.save();
-    canvas.clipRRect(headerRR);
-    canvas.drawRect(
-      header,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment(-1.5 + sheen * 3, -1),
-          end: Alignment(sheen * 3, 1),
-          colors: [
-            Colors.transparent,
-            Colors.white.withValues(alpha: 0.18),
-            Colors.transparent,
-          ],
-          stops: const [0.35, 0.5, 0.65],
-        ).createShader(header),
-    );
-    canvas.restore();
-
-    final TextPainter title = TextPainter(
-      text: TextSpan(
-        text: 'My Apps',
-        style: TextStyle(
-          fontSize: sw * 0.12,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    title.paint(
-      canvas,
-      Offset(header.left + sw * 0.06, header.top + header.height * 0.18),
-    );
-
-    final TextPainter subtitle = TextPainter(
-      text: TextSpan(
-        text: 'Built with Flutter',
-        style: TextStyle(
-          fontSize: sw * 0.06,
-          color: Colors.white.withValues(alpha: 0.75),
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    subtitle.paint(
-      canvas,
-      Offset(header.left + sw * 0.06, header.top + header.height * 0.60),
-    );
-
-    final double avatarR = header.height * 0.20;
-    final Offset avatarCenter =
-        Offset(header.right - sw * 0.09, header.top + header.height * 0.32);
-    canvas.drawCircle(avatarCenter, avatarR,
-        Paint()..color = Colors.white.withValues(alpha: 0.25));
-    canvas.drawCircle(avatarCenter, avatarR * 0.55,
-        Paint()..color = Colors.white.withValues(alpha: 0.85));
-
-    final double labelY = header.bottom + sh * 0.055;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(screen.left + pad, labelY, sw * 0.34, sh * 0.028),
-        Radius.circular(sh * 0.014),
-      ),
-      Paint()..color = _white.withValues(alpha: 0.35),
-    );
-
-    final double cardH = sh * 0.11;
-    final double gap = sh * 0.025;
-    double y = labelY + sh * 0.028 + sh * 0.035;
-    final List<List<Color>> gradients = [
-      [_cyan, _blue],
-      [_purple, _blue],
-      [_amber, _purple],
-    ];
-    for (int i = 0; i < 3; i++) {
-      _projectCard(
-        canvas,
-        Rect.fromLTWH(screen.left + pad, y, sw - pad * 2, cardH),
-        gradients[i],
-        i == 0,
-      );
-      y += cardH + gap;
-    }
-
-    final double navH = sh * 0.10;
-    final Rect nav = Rect.fromLTWH(
-      screen.left + pad,
-      screen.bottom - navH - sh * 0.05,
-      sw - pad * 2,
-      navH,
-    );
-    final RRect navRR =
-        RRect.fromRectAndRadius(nav, Radius.circular(navH * 0.5));
-    canvas.drawRRect(navRR, Paint()..color = const Color(0xFF0D1626));
-    canvas.drawRRect(
-      navRR,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = _white.withValues(alpha: 0.07),
-    );
-
-    final double slot = nav.width / 3;
-    for (int i = 0; i < 3; i++) {
-      final Offset c = Offset(nav.left + slot * (i + 0.5), nav.center.dy);
-      if (i == 0) {
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromCenter(center: c, width: navH * 0.95, height: navH * 0.72),
-            Radius.circular(navH * 0.36),
-          ),
-          Paint()..color = _blue.withValues(alpha: 0.22),
-        );
-      }
-      _navIcon(canvas, c, navH, i,
-          i == 0 ? _blue : _white.withValues(alpha: 0.28));
-    }
-
-    final double fabR = sw * 0.085;
-    final Offset fabCenter =
-        Offset(screen.right - pad - fabR, nav.top - fabR * 1.35);
-    final double pulse = 1 + 0.06 * math.sin(t * 2 * math.pi * 3);
-    canvas.drawCircle(
-      fabCenter,
-      fabR * 1.5,
-      Paint()
-        ..color = _blue.withValues(alpha: 0.20)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-    );
-    canvas.drawCircle(
-      fabCenter,
-      fabR * pulse,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [_blue, _purple],
-        ).createShader(Rect.fromCircle(center: fabCenter, radius: fabR)),
-    );
-    final plusPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = math.max(1.5, fabR * 0.16)
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(fabCenter.translate(-fabR * 0.4, 0),
-        fabCenter.translate(fabR * 0.4, 0), plusPaint);
-    canvas.drawLine(fabCenter.translate(0, -fabR * 0.4),
-        fabCenter.translate(0, fabR * 0.4), plusPaint);
-  }
-
-  void _projectCard(
-      Canvas canvas, Rect rect, List<Color> gradient, bool featured) {
-    final RRect rrect =
-        RRect.fromRectAndRadius(rect, Radius.circular(rect.height * 0.22));
-    canvas.drawRRect(rrect, Paint()..color = const Color(0xFF131C2C));
-    canvas.drawRRect(
-      rrect,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = _white.withValues(alpha: 0.06),
-    );
-
-    final double thumbSize = rect.height * 0.66;
-    final Rect thumb = Rect.fromLTWH(
-      rect.left + rect.height * 0.2,
-      rect.center.dy - thumbSize / 2,
-      thumbSize,
-      thumbSize,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(thumb, Radius.circular(thumbSize * 0.28)),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradient,
-        ).createShader(thumb),
-    );
-
-    final double textLeft = thumb.right + rect.height * 0.18;
-    final double barH = rect.height * 0.12;
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-            textLeft, rect.center.dy - barH * 1.6, rect.width * 0.42, barH),
-        Radius.circular(barH * 0.5),
-      ),
-      Paint()..color = _white.withValues(alpha: 0.80),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-            textLeft, rect.center.dy + barH * 0.4, rect.width * 0.28, barH * 0.75),
-        Radius.circular(barH * 0.4),
-      ),
-      Paint()..color = _white.withValues(alpha: 0.30),
-    );
-
-    if (featured) {
-      final Rect pill = Rect.fromLTWH(
-        rect.right - rect.width * 0.20,
-        rect.center.dy - barH * 0.55,
-        rect.width * 0.13,
-        barH * 1.1,
-      );
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(pill, Radius.circular(pill.height / 2)),
-        Paint()..color = _green.withValues(alpha: 0.22),
-      );
-      final TextPainter tp = TextPainter(
-        text: TextSpan(
-          text: 'LIVE',
-          style: TextStyle(
-            fontSize: pill.height * 0.6,
-            fontWeight: FontWeight.w700,
-            color: _green,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      tp.paint(
-        canvas,
-        Offset(pill.center.dx - tp.width / 2, pill.center.dy - tp.height / 2),
-      );
-    }
-  }
-
-  void _navIcon(Canvas canvas, Offset c, double navH, int index, Color color) {
-    final Paint p = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = math.max(1.2, navH * 0.06)
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-    final double s = navH * 0.18;
-
-    if (index == 0) {
-      final Path path = Path()
-        ..moveTo(c.dx - s, c.dy)
-        ..lineTo(c.dx, c.dy - s)
-        ..lineTo(c.dx + s, c.dy)
-        ..moveTo(c.dx - s * 0.7, c.dy)
-        ..lineTo(c.dx - s * 0.7, c.dy + s * 0.8)
-        ..lineTo(c.dx + s * 0.7, c.dy + s * 0.8)
-        ..lineTo(c.dx + s * 0.7, c.dy);
-      canvas.drawPath(path, p);
-    } else if (index == 1) {
-      canvas.drawCircle(c.translate(-s * 0.2, -s * 0.2), s * 0.7, p);
-      canvas.drawLine(
-          c.translate(s * 0.3, s * 0.3), c.translate(s * 0.9, s * 0.9), p);
-    } else {
-      canvas.drawCircle(c.translate(0, -s * 0.35), s * 0.5, p);
-      canvas.drawArc(
-        Rect.fromCenter(
-            center: c.translate(0, s * 0.9), width: s * 1.8, height: s * 1.6),
-        math.pi,
-        math.pi,
-        false,
-        p,
-      );
-    }
-  }
-
-  void _paintChips(Canvas canvas, Size size) {
-    final double fs = (size.width * 0.028).clamp(9.0, 15.0);
-    for (final chip in _chips) {
-      final double angle = t * 2 * math.pi + chip.phase;
-      final double x =
-          size.width * chip.relX + math.cos(angle) * size.width * 0.008;
-      final double y =
-          size.height * chip.relY + math.sin(angle) * size.height * 0.016;
-      _chip(canvas, Offset(x, y), chip.label, chip.color, fs);
-    }
-  }
-
-  void _chip(
-      Canvas canvas, Offset center, String label, Color color, double fs) {
-    final TextPainter tp = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: TextStyle(
-          fontFamily: 'monospace',
-          fontSize: fs,
-          fontWeight: FontWeight.w600,
-          color: _white.withValues(alpha: 0.9),
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-
-    final double padX = fs * 0.85;
-    final double padY = fs * 0.5;
-    final double dotR = fs * 0.28;
-    final double gap = fs * 0.45;
-    final double w = padX * 2 + dotR * 2 + gap + tp.width;
-    final double h = tp.height + padY * 2;
-    final RRect rrect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center, width: w, height: h),
-      Radius.circular(h / 2),
-    );
-
-    canvas.drawRRect(
-      rrect.inflate(1),
-      Paint()
-        ..color = color.withValues(alpha: 0.30)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-    );
-    canvas.drawRRect(rrect,
-        Paint()..color = const Color(0xFF111826).withValues(alpha: 0.92));
-    canvas.drawRRect(
-      rrect,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = color.withValues(alpha: 0.55),
-    );
-    canvas.drawCircle(
-      Offset(rrect.left + padX + dotR, center.dy),
-      dotR,
-      Paint()..color = color,
-    );
-    tp.paint(
-      canvas,
-      Offset(rrect.left + padX + dotR * 2 + gap, center.dy - tp.height / 2),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _MobileAppPainter oldDelegate) => true;
-}
-
-// ─────────────────────────────────────────────────────────────
 // HomeScreen
 // ─────────────────────────────────────────────────────────────
 class HomeScreen extends StatefulWidget {
@@ -1168,12 +608,42 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<Widget> _navButtons() {
+  Widget _buildProfileCard(double width) {
+    return ProfileCard(
+      avatarUrl: 'assets/pro_pic.png',
+      miniAvatarUrl: 'assets/pro_pic.png',
+      name: 'Rayar Mohan',
+      title: 'Mobile App Developer',
+      handle: 'rayarmohan',
+      status: 'Available for work',
+      contactText: 'Contact Me',
+      width: width,
+      onContactClick: () => _scrollToKey(_contactKey),
+    );
+  }
+
+  List<Widget> _navButtons({bool compact = false}) {
     return [
-      HoverShiningNavButton(text: 'Skills',          onTap: () => _scrollToKey(_skillsKey)),
-      HoverShiningNavButton(text: 'Work Experience', onTap: () => _scrollToKey(_experienceKey)),
-      HoverShiningNavButton(text: 'Education',       onTap: () => _scrollToKey(_educationKey)),
-      HoverShiningNavButton(text: 'Contact me',      onTap: () => _scrollToKey(_contactKey)),
+      HoverShiningNavButton(
+        text: 'Skills',
+        compact: compact,
+        onTap: () => _scrollToKey(_skillsKey),
+      ),
+      HoverShiningNavButton(
+        text: compact ? 'Experience' : 'Work Experience',
+        compact: compact,
+        onTap: () => _scrollToKey(_experienceKey),
+      ),
+      HoverShiningNavButton(
+        text: 'Education',
+        compact: compact,
+        onTap: () => _scrollToKey(_educationKey),
+      ),
+      HoverShiningNavButton(
+        text: compact ? 'Contact' : 'Contact me',
+        compact: compact,
+        onTap: () => _scrollToKey(_contactKey),
+      ),
     ];
   }
 
@@ -1183,18 +653,20 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isLarge,
     TextTheme textTheme,
   ) {
-    final List<Widget> navButtons = _navButtons();
+    final List<Widget> navButtons = _navButtons(compact: isSmall);
 
     if (isSmall) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 12,
-            runSpacing: 10,
-            children: navButtons,
-          ),
-        ],
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          children: [
+            for (int i = 0; i < navButtons.length; i++) ...[
+              if (i > 0) const SizedBox(width: 8),
+              navButtons[i],
+            ],
+          ],
+        ),
       );
     }
 
@@ -1244,12 +716,90 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  static const String _bioText =
+      'Mobile App Developer skilled in crafting efficient Flutter applications for Android and iOS. '
+      'Proficient in designing and developing scalable, high-performance mobile solutions with clean architecture. '
+      'Strong foundation in state management, REST APIs, payment integrations, and real-time features. '
+      'Eager collaborator committed to delivering high-quality products in fast-paced, team-oriented environments.';
+
+  static const String _contactBlurb =
+      "I am open to new career opportunities, freelance collaborations, and remote roles worldwide.\n"
+      "Let's build something great together—reach out to me.";
+
+  Widget _buildRole(TextTheme textTheme, double roleFontSize) {
+    return AnimatedOnScroll(
+      key: const ValueKey('hero_role'),
+      delay: const Duration(milliseconds: 220),
+      slideFrom: const Offset(0, 35),
+      child: Text(
+        'Mobile App Developer',
+        style: textTheme.headlineLarge!
+            .copyWith(fontSize: roleFontSize, color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget _buildBio(TextTheme textTheme, {required bool isMobile}) {
+    return AnimatedOnScroll(
+      key: const ValueKey('hero_bio'),
+      delay: const Duration(milliseconds: 340),
+      slideFrom: const Offset(0, 30),
+      child: Text(
+        _bioText,
+        style: isMobile
+            ? textTheme.bodyLarge!.copyWith(
+                fontSize: 15.5,
+                height: 1.65,
+                color: Colors.white.withValues(alpha: 0.82),
+              )
+            : textTheme.headlineMedium,
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+
+  Widget _buildSocialBlock() {
+    return AnimatedOnScroll(
+      key: const ValueKey('hero_social'),
+      delay: const Duration(milliseconds: 460),
+      slideFrom: const Offset(0, 25),
+      child: _buildSocialRow(),
+    );
+  }
+
+  Widget _buildResumeButton() {
+    return AnimatedOnScroll(
+      key: const ValueKey('hero_resume'),
+      delay: const Duration(milliseconds: 560),
+      slideFrom: const Offset(0, 20),
+      child: Row(
+        children: [
+          ShiningButton(
+            text: 'Download My RESUME',
+            onTap: () async {
+              final Uri url = Uri.parse(
+                  'https://rayarmohan.github.io/assets/assets/rayar_mohan.pdf');
+              if (!await launchUrl(
+                url,
+                mode: LaunchMode.externalApplication,
+              )) {
+                await launchUrl(
+                  Uri.parse(
+                      'https://rayarmohan.github.io/assets/rayar_mohan.pdf'),
+                  mode: LaunchMode.externalApplication,
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTextBlock(
-    BuildContext context,
     TextTheme textTheme,
     double nameFontSize,
-    double roleFontSize,
-    double screenWidth, {
+    double roleFontSize, {
     bool showName = true,
   }) {
     return Column(
@@ -1260,124 +810,182 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildName(textTheme, nameFontSize),
           const SizedBox(height: 20),
         ],
-
-        AnimatedOnScroll(
-          key: const ValueKey('hero_role'),
-          delay: const Duration(milliseconds: 220),
-          slideFrom: const Offset(0, 35),
-          child: Text(
-            'Mobile App Developer',
-            style: textTheme.headlineLarge!
-                .copyWith(fontSize: roleFontSize, color: Colors.grey),
-          ),
-        ),
-
+        _buildRole(textTheme, roleFontSize),
         const SizedBox(height: 16),
-
-        AnimatedOnScroll(
-          key: const ValueKey('hero_bio'),
-          delay: const Duration(milliseconds: 340),
-          slideFrom: const Offset(0, 30),
-          child: Text(
-            'Mobile App Developer skilled in crafting efficient Flutter applications for Android and iOS. '
-            'Proficient in designing and developing scalable, high-performance mobile solutions with clean architecture. '
-            'Strong foundation in state management, REST APIs, payment integrations, and real-time features. '
-            'Eager collaborator committed to delivering high-quality products in fast-paced, team-oriented environments.',
-            style: textTheme.headlineMedium,
-            textAlign: TextAlign.left,
-          ),
-        ),
-
+        _buildBio(textTheme, isMobile: false),
         const SizedBox(height: 28),
-
-        AnimatedOnScroll(
-          key: const ValueKey('hero_social'),
-          delay: const Duration(milliseconds: 460),
-          slideFrom: const Offset(0, 25),
-          child: _buildSocialRow(),
-        ),
-
+        _buildSocialBlock(),
         const SizedBox(height: 20),
-
-        AnimatedOnScroll(
-          key: const ValueKey('hero_resume'),
-          delay: const Duration(milliseconds: 560),
-          slideFrom: const Offset(0, 20),
-          child: Row(
-            children: [
-              ShiningButton(
-                text: 'Download My RESUME',
-                onTap: () async {
-                  final Uri url = Uri.parse('https://rayarmohan.github.io/assets/assets/rayar_mohan.pdf');
-                  if (!await launchUrl(
-                    url,
-                    mode: LaunchMode.externalApplication,
-                  )) {
-                    await launchUrl(
-                      Uri.parse('https://rayarmohan.github.io/assets/rayar_mohan.pdf'),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
+        _buildResumeButton(),
       ],
     );
   }
 
-  Widget _buildWhatIDoTextBlock(
-    BuildContext context,
+  Widget _buildMobileHero(
     TextTheme textTheme,
     double nameFontSize,
     double roleFontSize,
-    double screenWidth,
+    double cardWidth,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 25),
-
+        const SizedBox(height: 4),
+        _buildName(textTheme, nameFontSize),
+        const SizedBox(height: 8),
+        _buildRole(textTheme, roleFontSize),
+        const SizedBox(height: 28),
         AnimatedOnScroll(
-          key: const ValueKey('skills_heading'),
-          slideFrom: const Offset(-60, 0),
-          child: Text(
-            'What I Do',
-            style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
+          key: const ValueKey('hero_card_mobile'),
+          slideFrom: const Offset(0, -30),
+          duration: const Duration(milliseconds: 800),
+          child: Center(child: _buildProfileCard(cardWidth)),
+        ),
+        const SizedBox(height: 28),
+        _buildBio(textTheme, isMobile: true),
+        const SizedBox(height: 22),
+        _buildSocialBlock(),
+        const SizedBox(height: 22),
+        _buildResumeButton(),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle({
+    required String title,
+    required TextTheme textTheme,
+    required double fontSize,
+    Key? key,
+    Key? textKey,
+    Offset slideFrom = const Offset(-70, 0),
+  }) {
+    return AnimatedOnScroll(
+      key: key,
+      slideFrom: slideFrom,
+      child: Text(
+        title,
+        key: textKey,
+        style: textTheme.headlineLarge!.copyWith(fontSize: fontSize),
+      ),
+    );
+  }
+
+  Widget _buildTechStack({required double radius, required bool isMobile}) {
+    const List<String> assets = [
+      'assets/flutter.jpg',
+      'assets/android.jpg',
+      'assets/ios.png',
+      'assets/dart.jpg',
+      'assets/firebase.png',
+      'assets/cloudg.jpeg',
+      'assets/git.png',
+      'assets/postman.png',
+      'assets/figma.png',
+      'assets/aws.png',
+      'assets/stripe.png',
+    ];
+    return Wrap(
+      spacing: isMobile ? 16 : 20,
+      runSpacing: isMobile ? 16 : 20,
+      children: [
+        for (final asset in assets)
+          CircleAvatar(
+            radius: radius,
+            backgroundColor: Colors.transparent,
+            backgroundImage: AssetImage(asset),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSkillsSection({
+    required TextTheme textTheme,
+    required bool isSmall,
+    required double headingFontSize,
+    required double visualSize,
+    required double visualOffset,
+  }) {
+    const double mobileVisualSize = 240;
+    final double techRadius = isSmall ? 24 : 30;
+
+    final Widget heading = _buildSectionTitle(
+      title: 'What I Do',
+      textTheme: textTheme,
+      fontSize: headingFontSize,
+      key: const ValueKey('skills_heading'),
+      slideFrom: const Offset(-60, 0),
+    );
+
+    final Widget services = AnimatedOnScroll(
+      key: const ValueKey('skills_list'),
+      delay: const Duration(milliseconds: 150),
+      slideFrom: const Offset(0, 40),
+      child: const WhatIDoSection(),
+    );
+
+    final Widget stack = AnimatedOnScroll(
+      key: const ValueKey('skills_stack'),
+      delay: const Duration(milliseconds: 300),
+      slideFrom: const Offset(0, 30),
+      child: _buildTechStack(radius: techRadius, isMobile: isSmall),
+    );
+
+    if (isSmall) {
+      final Widget visual = AnimatedOnScroll(
+        key: const ValueKey('skills_visual_mobile'),
+        slideFrom: const Offset(0, 40),
+        child: Center(
+          child: SizedBox(
+            width: mobileVisualSize,
+            height: mobileVisualSize,
+            child: const CodeEditorAnimation(),
           ),
         ),
+      );
+      return Column(
+        key: _skillsKey,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 4),
+          heading,
+          const SizedBox(height: 24),
+          visual,
+          const SizedBox(height: 32),
+          services,
+          const SizedBox(height: 40),
+          stack,
+        ],
+      );
+    }
 
-        const SizedBox(height: 20),
-
+    return Row(
+      key: _skillsKey,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
         AnimatedOnScroll(
-          key: const ValueKey('skills_list'),
-          delay: const Duration(milliseconds: 150),
-          slideFrom: const Offset(0, 40),
-          child: WhatIDoSection(),
+          key: const ValueKey('skills_visual'),
+          slideFrom: const Offset(-80, 0),
+          duration: const Duration(milliseconds: 900),
+          child: Transform.translate(
+            offset: Offset(0, visualOffset),
+            child: SizedBox(
+              width: visualSize,
+              height: visualSize,
+              child: const CodeEditorAnimation(),
+            ),
+          ),
         ),
-
-        const SizedBox(height: 50),
-
-        AnimatedOnScroll(
-          key: const ValueKey('skills_stack'),
-          delay: const Duration(milliseconds: 300),
-          slideFrom: const Offset(0, 30),
-          child: Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            children: const [
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/flutter.jpg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/android.jpg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/ios.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/dart.jpg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/firebase.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/cloudg.jpeg')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/git.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/postman.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/figma.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/aws.png')),
-              CircleAvatar(radius: 30, backgroundColor: Colors.transparent, backgroundImage: AssetImage('assets/stripe.png')),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 25),
+              heading,
+              const SizedBox(height: 20),
+              services,
+              const SizedBox(height: 50),
+              stack,
             ],
           ),
         ),
@@ -1395,19 +1003,30 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool isMedium = screenWidth >= 700 && screenWidth < 1100;
     final bool isSmall  = screenWidth < 700;
 
-    final double nameFontSize  = isLarge ? 90 : isMedium ? 60 : 40;
-    final double roleFontSize  = isLarge ? 60 : isMedium ? 40 : 28;
-    final double horizontalPad = isLarge ? 50 : isMedium ? 30 : 16;
-    final double lottieSize    = isLarge ? 500 : isMedium ? 360 : 280;
-    final double lottieOffset  = isLarge ? 0 : isMedium ? -20 : 0;
-    final double lottie2Offset = isLarge ? 40 : isMedium ? 10 : 0;
+    final double heroNameSize    = isLarge ? 90 : isMedium ? 60 : 36;
+    final double headingFontSize = isLarge ? 90 : isMedium ? 60 : 32;
+    final double roleFontSize    = isLarge ? 60 : isMedium ? 40 : 22;
+    final double horizontalPad   = isLarge ? 50 : isMedium ? 30 : 20;
+    final double lottieSize      = isLarge ? 500 : isMedium ? 360 : 280;
+    final double lottieOffset    = isLarge ? 0 : isMedium ? -20 : 0;
+    final double lottie2Offset   = isLarge ? -24 : isMedium ? -12 : 0;
+    final double profileCardWidth = isLarge
+        ? 340
+        : isMedium
+            ? 300
+            : (screenWidth - 110).clamp(240.0, 300.0);
+
+    final double topPadding = isSmall ? 24 : 50;
+    final double heroToSkillsGap = isSmall ? 64 : screenHeight * 0.15;
+    final double skillsToExperienceGap = isSmall ? 72 : screenHeight * 0.20;
+    final double sectionGap = isSmall ? 64 : screenHeight * 0.15;
 
     final scrollContent = SingleChildScrollView(
       controller: _scrollController,
       child: Padding(
         padding: EdgeInsets.only(
           left: horizontalPad,
-          top: 50,
+          top: topPadding,
           right: horizontalPad,
         ),
         child: Column(
@@ -1421,26 +1040,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _buildNavbar(isSmall, isMedium, isLarge, textTheme),
               ),
 
-            if (isSmall) const SizedBox(height: 60),
+            if (isSmall) const SizedBox(height: 24),
 
             isSmall
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AnimatedOnScroll(
-                        key: const ValueKey('hero_lottie_small'),
-                        slideFrom: const Offset(0, -40),
-                        duration: const Duration(milliseconds: 800),
-                        child: Center(
-                          child: SizedBox(
-                            width: lottieSize,
-                            height: lottieSize,
-                            child: const CodeEditorAnimation(),
-                          ),
-                        ),
-                      ),
-                      _buildTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                    ],
+                ? _buildMobileHero(
+                    textTheme,
+                    heroNameSize,
+                    roleFontSize,
+                    profileCardWidth,
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1448,7 +1055,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _buildName(textTheme, nameFontSize),
+                          _buildName(textTheme, heroNameSize),
                           const SizedBox(width: 24),
                           Expanded(
                             child: Align(
@@ -1475,25 +1082,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Expanded(
                             child: _buildTextBlock(
-                              context,
                               textTheme,
-                              nameFontSize,
+                              heroNameSize,
                               roleFontSize,
-                              screenWidth,
                               showName: false,
                             ),
                           ),
+                          SizedBox(width: isLarge ? 56 : 32),
                           AnimatedOnScroll(
                             key: const ValueKey('hero_lottie'),
                             slideFrom: const Offset(80, 0),
                             duration: const Duration(milliseconds: 900),
                             child: Transform.translate(
                               offset: Offset(0, lottieOffset),
-                              child: SizedBox(
-                                width: lottieSize,
-                                height: lottieSize,
-                                child: const CodeEditorAnimation(),
-                              ),
+                              child: _buildProfileCard(profileCardWidth),
                             ),
                           ),
                         ],
@@ -1501,61 +1103,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
 
-            SizedBox(height: screenHeight * 0.15),
+            SizedBox(height: heroToSkillsGap),
 
-            isSmall
-                ? Column(
-                    key: _skillsKey,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildWhatIDoTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                      AnimatedOnScroll(
-                        key: const ValueKey('skills_lottie_small'),
-                        slideFrom: const Offset(0, 50),
-                        child: Center(
-                          child: SizedBox(
-                            width: lottieSize,
-                            height: lottieSize,
-                            child: const MobileAppAnimation(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    key: _skillsKey,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      AnimatedOnScroll(
-                        key: const ValueKey('skills_lottie'),
-                        slideFrom: const Offset(-80, 0),
-                        duration: const Duration(milliseconds: 900),
-                        child: Transform.translate(
-                          offset: Offset(0, lottie2Offset),
-                          child: SizedBox(
-                            width: lottieSize,
-                            height: lottieSize,
-                            child: const MobileAppAnimation(),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: _buildWhatIDoTextBlock(context, textTheme, nameFontSize, roleFontSize, screenWidth),
-                      ),
-                    ],
-                  ),
+            _buildSkillsSection(
+              textTheme: textTheme,
+              isSmall: isSmall,
+              headingFontSize: headingFontSize,
+              visualSize: lottieSize,
+              visualOffset: lottie2Offset,
+            ),
 
-            SizedBox(height: screenHeight * .20),
+            SizedBox(height: skillsToExperienceGap),
 
-            AnimatedOnScroll(
+            _buildSectionTitle(
+              title: 'Experience',
+              textTheme: textTheme,
+              fontSize: headingFontSize,
               key: const ValueKey('exp_heading'),
-              slideFrom: const Offset(-70, 0),
-              child: Text(
-                key: _experienceKey,
-                'Experience',
-                style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
-              ),
+              textKey: _experienceKey,
             ),
 
             const SizedBox(height: 10),
@@ -1567,16 +1132,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ExperienceSection(),
             ),
 
-            SizedBox(height: screenHeight * .15),
+            SizedBox(height: sectionGap),
 
-            AnimatedOnScroll(
+            _buildSectionTitle(
+              title: 'Education',
+              textTheme: textTheme,
+              fontSize: headingFontSize,
               key: const ValueKey('edu_heading'),
-              slideFrom: const Offset(-70, 0),
-              child: Text(
-                key: _educationKey,
-                'Education',
-                style: textTheme.headlineLarge!.copyWith(fontSize: nameFontSize),
-              ),
+              textKey: _educationKey,
             ),
 
             const SizedBox(height: 10),
@@ -1588,7 +1151,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: EducationSection(),
             ),
 
-            SizedBox(key: _contactKey, height: 60),
+            SizedBox(key: _contactKey, height: isSmall ? 44 : 60),
 
             AnimatedOnScroll(
               key: const ValueKey('contact_heading'),
@@ -1596,7 +1159,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'Reach out to me',
                 style: textTheme.headlineLarge!.copyWith(
-                  fontSize: roleFontSize,
+                  fontSize: isSmall ? 28 : roleFontSize,
                   color: Colors.grey,
                 ),
               ),
@@ -1609,9 +1172,14 @@ class _HomeScreenState extends State<HomeScreen> {
               delay: const Duration(milliseconds: 150),
               slideFrom: const Offset(0, 35),
               child: Text(
-                "I am open to new career opportunities, freelance collaborations, and remote roles worldwide.\n"
-                "Let's build something great together—reach out to me.",
-                style: textTheme.headlineMedium,
+                _contactBlurb,
+                style: isSmall
+                    ? textTheme.bodyLarge!.copyWith(
+                        fontSize: 15.5,
+                        height: 1.65,
+                        color: Colors.white.withValues(alpha: 0.82),
+                      )
+                    : textTheme.headlineMedium,
                 textAlign: TextAlign.left,
               ),
             ),
@@ -1627,12 +1195,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'mohanmanu086@gmail.com',
-                    style: textTheme.titleMedium!.copyWith(color: Colors.grey),
+                    style: textTheme.titleMedium!.copyWith(
+                      color: Colors.grey,
+                      fontSize: isSmall ? 15 : null,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '+91 8921358229',
-                    style: textTheme.titleMedium!.copyWith(color: Colors.grey),
+                    style: textTheme.titleMedium!.copyWith(
+                      color: Colors.grey,
+                      fontSize: isSmall ? 15 : null,
+                    ),
                   ),
                 ],
               ),
@@ -1656,12 +1230,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Center(
                 child: Text(
                   'Made with ❤️ by Rayar Mohan',
-                  style: textTheme.titleMedium!.copyWith(color: Colors.grey),
+                  style: textTheme.titleMedium!.copyWith(
+                    color: Colors.grey,
+                    fontSize: isSmall ? 15 : null,
+                  ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 100),
+            SizedBox(height: isSmall ? 56 : 100),
           ],
         ),
       ),
@@ -1670,7 +1247,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: CleanGridBackground(
-        child: scrollContent,
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: scrollContent,
+        ),
       ),
     );
   }

@@ -5,8 +5,6 @@ class EducationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     // Mapping your resume education details directly to the UI list layout configuration
     final educationHistory = [
       _EducationData(
@@ -30,7 +28,7 @@ class EducationSection extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -133,7 +131,7 @@ class _EducationRowCardState extends State<_EducationRowCard> {
               // Core Information Content Layout
               Padding(
                 padding: EdgeInsets.symmetric(
-                  vertical: 24.0,
+                  vertical: isMobile ? 18.0 : 24.0,
                   horizontal: isMobile
                       ? 16.0
                       : 24.0, // Adapts side padding to maximize workspace on small screens
@@ -147,9 +145,9 @@ class _EducationRowCardState extends State<_EducationRowCard> {
                       duration: const Duration(milliseconds: 200),
                       child: Container(
                         width: isMobile
-                            ? 58
+                            ? 52
                             : 80, // Scales logo slightly down on mobile viewports
-                        height: isMobile ? 58 : 80,
+                        height: isMobile ? 52 : 80,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white.withOpacity(0.05),
@@ -163,7 +161,7 @@ class _EducationRowCardState extends State<_EducationRowCard> {
                         padding: const EdgeInsets.all(4),
                         child: ClipOval(
                           child: Image.asset(
-                            widget.data.logoAsset,
+                            'assets/${widget.data.logoAsset}',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Icon(
@@ -195,7 +193,8 @@ class _EducationRowCardState extends State<_EducationRowCard> {
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 30,
+                                        fontSize: 18,
+                                        height: 1.3,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -203,7 +202,7 @@ class _EducationRowCardState extends State<_EducationRowCard> {
                                       widget.data.duration,
                                       style: TextStyle(
                                         color: Colors.grey[400],
-                                        fontSize: 13,
+                                        fontSize: 12.5,
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
