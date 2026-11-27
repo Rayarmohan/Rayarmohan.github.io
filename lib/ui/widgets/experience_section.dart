@@ -97,22 +97,68 @@ class _ExperienceSectionState extends State<ExperienceSection> {
     final bool isMobile = screenWidth < 700;
 
     if (isMobile) {
+      final double cardWidth = (screenWidth * 0.84).clamp(270.0, 360.0);
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 24.0),
+        padding: const EdgeInsets.symmetric(vertical: 18.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (int i = 0; i < _workHistory.length; i++) ...[
-              if (i > 0) const SizedBox(height: 16),
-              _ExperienceCard(data: _workHistory[i], fillHeight: false),
-            ],
+            Padding(
+              padding: const EdgeInsets.only(right: 2, bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'Swipe to explore',
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 12,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(Icons.swipe_rounded, size: 16, color: Colors.grey[500]),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 620,
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.trackpad,
+                    PointerDeviceKind.stylus,
+                  },
+                  scrollbars: false,
+                ),
+                child: ListView.separated(
+                  controller: _controller,
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(2, 4, 12, 14),
+                  itemCount: _workHistory.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 14),
+                  itemBuilder: (context, index) => SizedBox(
+                    width: cardWidth,
+                    child: _ExperienceCard(
+                      data: _workHistory[index],
+                      fillHeight: false,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       );
     }
 
     final bool isDesktop = screenWidth > 1000;
-    final double cardWidth =
-        isDesktop ? 430 : (screenWidth * 0.86).clamp(280.0, 430.0);
+    final double cardWidth = isDesktop
+        ? 430
+        : (screenWidth * 0.86).clamp(280.0, 430.0);
     final double cardHeight = isDesktop ? 460 : 540;
 
     return Padding(
@@ -132,7 +178,10 @@ class _ExperienceSectionState extends State<ExperienceSection> {
                 ),
               ),
               const SizedBox(width: 12),
-              _arrowButton(Icons.arrow_back_ios_new_rounded, () => _scrollBy(-1)),
+              _arrowButton(
+                Icons.arrow_back_ios_new_rounded,
+                () => _scrollBy(-1),
+              ),
               const SizedBox(width: 8),
               _arrowButton(Icons.arrow_forward_ios_rounded, () => _scrollBy(1)),
             ],
@@ -154,7 +203,10 @@ class _ExperienceSectionState extends State<ExperienceSection> {
                 controller: _controller,
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 2),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 2,
+                ),
                 itemCount: _workHistory.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 20),
                 itemBuilder: (context, index) {

@@ -104,9 +104,10 @@ class _CodeEditorAnimationState extends State<CodeEditorAnimation>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 10))
-          ..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
   }
 
   @override
@@ -203,15 +204,9 @@ class _CodeEditorPainter extends CustomPainter {
       _CodeSegment('true', _kw),
       _CodeSegment(',', _punc),
     ]),
-    _CodeLine(2, [
-      _CodeSegment(');', _punc),
-    ]),
-    _CodeLine(1, [
-      _CodeSegment('}', _punc),
-    ]),
-    _CodeLine(0, [
-      _CodeSegment('}', _punc),
-    ]),
+    _CodeLine(2, [_CodeSegment(');', _punc)]),
+    _CodeLine(1, [_CodeSegment('}', _punc)]),
+    _CodeLine(0, [_CodeSegment('}', _punc)]),
   ];
 
   static final int _totalChars = _code.fold<int>(
@@ -260,10 +255,18 @@ class _CodeEditorPainter extends CustomPainter {
       size.width * (0.72 + 0.03 * math.cos(t * 2 * math.pi)),
       size.height * (0.70 + 0.03 * math.sin(t * 2 * math.pi)),
     );
-    _orb(canvas, c1, size.width * 0.30,
-        const Color(0xFF2E43FF).withValues(alpha: 0.22));
-    _orb(canvas, c2, size.width * 0.28,
-        const Color(0xFF9A5BFF).withValues(alpha: 0.18));
+    _orb(
+      canvas,
+      c1,
+      size.width * 0.30,
+      const Color(0xFF2E43FF).withValues(alpha: 0.22),
+    );
+    _orb(
+      canvas,
+      c2,
+      size.width * 0.28,
+      const Color(0xFF9A5BFF).withValues(alpha: 0.18),
+    );
   }
 
   void _orb(Canvas canvas, Offset center, double radius, Color color) {
@@ -299,8 +302,7 @@ class _CodeEditorPainter extends CustomPainter {
   }
 
   void _paintCard(Canvas canvas, Rect card, double cardW) {
-    final rrect =
-        RRect.fromRectAndRadius(card, Radius.circular(cardW * 0.045));
+    final rrect = RRect.fromRectAndRadius(card, Radius.circular(cardW * 0.045));
 
     canvas.drawRRect(
       rrect.inflate(2),
@@ -341,15 +343,14 @@ class _CodeEditorPainter extends CustomPainter {
     final double dotR = math.max(2.5, cardW * 0.009);
     final double y = card.top + titleH * 0.5;
 
-    const dotColors = [
-      Color(0xFFFF5F57),
-      Color(0xFFFFBD2E),
-      Color(0xFF28C840),
-    ];
+    const dotColors = [Color(0xFFFF5F57), Color(0xFFFFBD2E), Color(0xFF28C840)];
     double x = card.left + cardW * 0.045;
     for (final c in dotColors) {
-      canvas.drawCircle(Offset(x, y), dotR,
-          Paint()..color = c.withValues(alpha: 0.9));
+      canvas.drawCircle(
+        Offset(x, y),
+        dotR,
+        Paint()..color = c.withValues(alpha: 0.9),
+      );
       x += dotR * 2.8;
     }
 
@@ -383,8 +384,7 @@ class _CodeEditorPainter extends CustomPainter {
     final double statusH = cardH * 0.09;
     final double fontPx = (cardH / 24).clamp(7.0, 15.0);
     final double available = cardH - titleH - statusH - fontPx * 1.2;
-    final double lineHeight =
-        math.min(fontPx * 1.55, available / _code.length);
+    final double lineHeight = math.min(fontPx * 1.55, available / _code.length);
     final double gutterRight = card.left + cardW * 0.13;
     final double codeLeft = gutterRight + cardW * 0.03;
     final double indentW = fontPx * 1.4;
@@ -418,8 +418,10 @@ class _CodeEditorPainter extends CustomPainter {
       )..layout();
       numberTp.paint(
         canvas,
-        Offset(gutterRight - numberTp.width,
-            y + (fontPx - numberTp.height) * 0.5),
+        Offset(
+          gutterRight - numberTp.width,
+          y + (fontPx - numberTp.height) * 0.5,
+        ),
       );
 
       double x = codeLeft + line.indent * indentW;
@@ -474,8 +476,12 @@ class _CodeEditorPainter extends CustomPainter {
       final double indicatorY = firstLineY + caretLine * lineHeight;
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromLTWH(card.left + cardW * 0.035, indicatorY,
-              fontPx * 0.22, lineHeight * 0.8),
+          Rect.fromLTWH(
+            card.left + cardW * 0.035,
+            indicatorY,
+            fontPx * 0.22,
+            lineHeight * 0.8,
+          ),
           Radius.circular(fontPx * 0.12),
         ),
         Paint()..color = const Color(0xFF4FD1C5).withValues(alpha: 0.8),
@@ -485,11 +491,16 @@ class _CodeEditorPainter extends CustomPainter {
       final double caretOpacity = blink > 0.5 ? 0.95 : 0.15;
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromLTWH(caretX + 1, caretY,
-              math.max(1.8, fontPx * 0.11), fontPx * 1.15),
+          Rect.fromLTWH(
+            caretX + 1,
+            caretY,
+            math.max(1.8, fontPx * 0.11),
+            fontPx * 1.15,
+          ),
           const Radius.circular(1),
         ),
-        Paint()..color = const Color(0xFFA9D606).withValues(alpha: caretOpacity),
+        Paint()
+          ..color = const Color(0xFFA9D606).withValues(alpha: caretOpacity),
       );
     }
   }
@@ -510,7 +521,10 @@ class _CodeEditorPainter extends CustomPainter {
     final double dotX = card.left + cardW * 0.045;
     final double centerY = y + statusH * 0.5;
     canvas.drawCircle(
-        Offset(dotX, centerY), dotR, Paint()..color = const Color(0xFF28C840));
+      Offset(dotX, centerY),
+      dotR,
+      Paint()..color = const Color(0xFF28C840),
+    );
 
     final tp = TextPainter(
       text: TextSpan(
@@ -538,8 +552,10 @@ class _CodeEditorPainter extends CustomPainter {
     )..layout();
     rightTp.paint(
       canvas,
-      Offset(card.right - rightTp.width - cardW * 0.045,
-          centerY - rightTp.height / 2),
+      Offset(
+        card.right - rightTp.width - cardW * 0.045,
+        centerY - rightTp.height / 2,
+      ),
     );
   }
 
@@ -561,10 +577,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
-  final GlobalKey _skillsKey     = GlobalKey();
+  final GlobalKey _skillsKey = GlobalKey();
   final GlobalKey _experienceKey = GlobalKey();
-  final GlobalKey _educationKey  = GlobalKey();
-  final GlobalKey _contactKey    = GlobalKey();
+  final GlobalKey _educationKey = GlobalKey();
+  final GlobalKey _contactKey = GlobalKey();
 
   @override
   void dispose() {
@@ -585,13 +601,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSocialRow() {
     return Row(
       children: [
-        _socialAvatar('assets/github_logo.png',  'https://github.com/Rayarmohan'),
+        _socialAvatar(
+          'assets/github_logo.png',
+          'https://github.com/Rayarmohan',
+        ),
         const SizedBox(width: 20),
-        _socialAvatar('assets/gmail_logo.jpg',   'mailto:mohanmanu0862@gmail.com'),
+        _socialAvatar(
+          'assets/gmail_logo.jpg',
+          'mailto:mohanmanu0862@gmail.com',
+        ),
         const SizedBox(width: 20),
-        _socialAvatar('assets/linkedin_logo.png','https://in.linkedin.com/in/rayarmohan'),
+        _socialAvatar(
+          'assets/linkedin_logo.png',
+          'https://in.linkedin.com/in/rayarmohan',
+        ),
         const SizedBox(width: 20),
-        _socialAvatar('assets/whatsapp.png',     'https://wa.me/918921358229'),
+        _socialAvatar('assets/whatsapp.png', 'https://wa.me/918921358229'),
       ],
     );
   }
@@ -656,18 +681,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Widget> navButtons = _navButtons(compact: isSmall);
 
     if (isSmall) {
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        child: Row(
-          children: [
-            for (int i = 0; i < navButtons.length; i++) ...[
-              if (i > 0) const SizedBox(width: 8),
-              navButtons[i],
-            ],
-          ],
-        ),
-      );
+      return Wrap(spacing: 8, runSpacing: 8, children: navButtons);
     }
 
     if (isMedium) {
@@ -733,8 +747,10 @@ class _HomeScreenState extends State<HomeScreen> {
       slideFrom: const Offset(0, 35),
       child: Text(
         'Mobile App Developer',
-        style: textTheme.headlineLarge!
-            .copyWith(fontSize: roleFontSize, color: Colors.grey),
+        style: textTheme.headlineLarge!.copyWith(
+          fontSize: roleFontSize,
+          color: Colors.grey,
+        ),
       ),
     );
   }
@@ -778,14 +794,13 @@ class _HomeScreenState extends State<HomeScreen> {
             text: 'Download My RESUME',
             onTap: () async {
               final Uri url = Uri.parse(
-                  'https://rayarmohan.github.io/assets/assets/rayar_mohan.pdf');
-              if (!await launchUrl(
-                url,
-                mode: LaunchMode.externalApplication,
-              )) {
+                'https://rayarmohan.github.io/assets/assets/rayar_mohan.pdf',
+              );
+              if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
                 await launchUrl(
                   Uri.parse(
-                      'https://rayarmohan.github.io/assets/rayar_mohan.pdf'),
+                    'https://rayarmohan.github.io/assets/rayar_mohan.pdf',
+                  ),
                   mode: LaunchMode.externalApplication,
                 );
               }
@@ -995,26 +1010,54 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme    = Theme.of(context).textTheme;
-    final screenWidth  = MediaQuery.of(context).size.width;
+    final textTheme = Theme.of(context).textTheme;
+    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final bool isLarge  = screenWidth >= 1100;
+    final bool isLarge = screenWidth >= 1100;
     final bool isMedium = screenWidth >= 700 && screenWidth < 1100;
-    final bool isSmall  = screenWidth < 700;
+    final bool isSmall = screenWidth < 700;
 
-    final double heroNameSize    = isLarge ? 90 : isMedium ? 60 : 36;
-    final double headingFontSize = isLarge ? 90 : isMedium ? 60 : 32;
-    final double roleFontSize    = isLarge ? 60 : isMedium ? 40 : 22;
-    final double horizontalPad   = isLarge ? 50 : isMedium ? 30 : 20;
-    final double lottieSize      = isLarge ? 500 : isMedium ? 360 : 280;
-    final double lottieOffset    = isLarge ? 0 : isMedium ? -20 : 0;
-    final double lottie2Offset   = isLarge ? -24 : isMedium ? -12 : 0;
+    final double heroNameSize = isLarge
+        ? 90
+        : isMedium
+        ? 60
+        : 34;
+    final double headingFontSize = isLarge
+        ? 90
+        : isMedium
+        ? 60
+        : 30;
+    final double roleFontSize = isLarge
+        ? 60
+        : isMedium
+        ? 40
+        : 21;
+    final double horizontalPad = isLarge
+        ? 50
+        : isMedium
+        ? 30
+        : 18;
+    final double lottieSize = isLarge
+        ? 500
+        : isMedium
+        ? 360
+        : 190;
+    final double lottieOffset = isLarge
+        ? 0
+        : isMedium
+        ? -20
+        : 0;
+    final double lottie2Offset = isLarge
+        ? -24
+        : isMedium
+        ? -12
+        : 0;
     final double profileCardWidth = isLarge
         ? 340
         : isMedium
-            ? 300
-            : (screenWidth - 110).clamp(240.0, 300.0);
+        ? 300
+        : (screenWidth - 110).clamp(240.0, 300.0);
 
     final double topPadding = isSmall ? 24 : 50;
     final double heroToSkillsGap = isSmall ? 64 : screenHeight * 0.15;
@@ -1032,16 +1075,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isSmall)
-              AnimatedOnScroll(
-                key: const ValueKey('navbar'),
-                slideFrom: const Offset(0, -30),
-                duration: const Duration(milliseconds: 500),
-                child: _buildNavbar(isSmall, isMedium, isLarge, textTheme),
-              ),
-
-            if (isSmall) const SizedBox(height: 24),
-
             isSmall
                 ? _buildMobileHero(
                     textTheme,
@@ -1246,11 +1279,80 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      bottomNavigationBar: isSmall
+          ? SafeArea(
+              top: false,
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xF20B0D12),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.10),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.35),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _mobileNavItem(
+                      Icons.auto_awesome_outlined,
+                      'Skills',
+                      () => _scrollToKey(_skillsKey),
+                    ),
+                    _mobileNavItem(
+                      Icons.work_outline_rounded,
+                      'Work',
+                      () => _scrollToKey(_experienceKey),
+                    ),
+                    _mobileNavItem(
+                      Icons.school_outlined,
+                      'Education',
+                      () => _scrollToKey(_educationKey),
+                    ),
+                    _mobileNavItem(
+                      Icons.mail_outline_rounded,
+                      'Contact',
+                      () => _scrollToKey(_contactKey),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
       body: CleanGridBackground(
-        child: SafeArea(
-          top: false,
-          bottom: false,
-          child: scrollContent,
+        child: SafeArea(top: false, bottom: false, child: scrollContent),
+      ),
+    );
+  }
+
+  Widget _mobileNavItem(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 19, color: const Color(0xFFA9D606)),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
